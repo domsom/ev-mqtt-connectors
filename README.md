@@ -1,50 +1,54 @@
-# fronius-mqtt-bridge
+# ev MQTT script(s)
 
-Python scripts
-* to fetch data from various APIs like power flow realtime data from a fronius data manager and pubish it to a mqtt broker.
-* for implementing controll-algorithms based on and setting via mqtt topics
+* Python script to fetch data from various EV APIs and publish their SoC to MQTT
+* Meter definition for the cFos PowerBrain wallbox, so that loading rules can utilize the SoC of plugged-in vehicles.
 
-I use it with [this setup](doc/setup.md).
-
-# Requirements
-* Tested with Python 3.5 on raspian
-
-# Usage
-Create, activate and setup venv:
-
+# Installation
 ```
-cd fronius-mqtt-bridge
-python3 -m venv ./venv
-source venv/bin/activate
-pip install -r requirements.txt
+pip install paho-mqtt PyZE
 ```
 
-Then set the right hostnames or ip addresss and ports in all python files that will be used and run for example:
+Make sure to have a MQTT broker (like mosquitto) available to connect to.
+
+Then set the right hostnames or ip addresss and ports in config.py as well as credentials in secrets.py
+
+To start and test if it works, run:
 
 ```
-python3 fronius-connector.py
+python3 zoe-connector.py
 ```
 
 The scripts will run in an infinite loop until an error happens or they are aborted via Ctrl+C.
 
+To have it started on system startup on a Linux-/Debian-based system, create a file zoe.service in /etc/systemd/system:
+```
+[Unit]
+Description=Zoe stream SoC to MQTT
+Documentation=https://github.com/domsom/ev-mqtt-connectors
+After=network.target mosquitto.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=envoy
+Group=envoy
+ExecStart=/usr/bin/python3 /path/to/zoe-connector.py
+WorkingDirectory=/path-to-zoe-connector.py
+Environment=PYTHONUNBUFFERED=true
+Restart=always
+RestartSec=5
+SyslogIdentifier=zoe
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+```
+Adjust the two directories to where you put the script, then run:
+```
+sudo systemctl daemon-reload
+sudo systemctl enable zoe.service 
+sudo systemctl start zoe.service
+```
+
 # Acknowledgement
-* [Jan-Piet Mens](https://jpmens.net/2013/03/10/visualizing-energy-consumption-with-mqtt/) for the inspiration for the script.
-* Juraj's [battsett.jar](https://github.com/jandrassy/battsett)
-* [InfluxDB Connector](https://thingsmatic.com/2017/03/02/influxdb-and-grafana-for-sensor-time-series/)
-
-# ToDo
-
-* One mainloop https://stackoverflow.com/a/49801719/5523503
-* pubish only if a client is connected to the broker
-* document my setup
-* add connector for Zoe battery status
-* improve battery-controller strategy
-** take sunshine duration prognosis into accoount
-* finish config.py
-* extend goe-charger with controlling capabilities
-* add goecharger-controller to set charging power based on available pv energy.
-* allow charging if soc < 7%
-* Status for battery-controller
-* add Forecast for tomorrow
-* connector for rpi temp sensor
-
+* @akleber for publishing the script, enabling me to fast forward these adjustments within just an hour or so :-)
