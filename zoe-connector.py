@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import json
 import paho.mqtt.client as paho  # pip install paho-mqtt
 import time
 import logging
@@ -10,7 +11,7 @@ from config import *
 from secrets import *
 
 
-FREQUENCY = 1200  # sec
+FREQUENCY = 600  # sec
 EXCEPTION_DELAY = 300
 
 
@@ -31,11 +32,9 @@ def getSocRange(gigya):
 def update(gigya):
     soc, remaining_range = getSocRange(gigya)
 
-    (result, mid) = mqttc.publish("{}/{}".format(ZOE_MQTT_PREFIX, 'soc'), str(soc), 0, retain=True)
-    # logging.info("Pubish Result: {} MID: {} for {}: {}".format(result, mid, 'soc', soc))
+    zoe = {'soc': soc, 'range': remaining_range}
 
-    (result, mid) = mqttc.publish("{}/{}".format(ZOE_MQTT_PREFIX, 'range'), str(remaining_range), 0, retain=True)
-    # logging.info("Pubish Result: {} MID: {} for {}: {}".format(result, mid, 'range', remaining_range))
+    mqttc.publish(topic=ZOE_MQTT_PREFIX, payload=json.dumps(zoe), qos=0, retain=True)
 
 
 if __name__ == '__main__':

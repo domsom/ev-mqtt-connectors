@@ -1,0 +1,38 @@
+{
+  "rtype":  2,   // 0 = modbus, 1 = http/json, 2 = mqtt/json
+
+  "name": "Renault Zoe", // as displayed in the config dialog
+  "manufacturer": "Renault",
+  "dev_type": "renault_zoe", // will be prefixed by "meter_"
+
+  "delay_accumulated": true,   // false: always read accumulated value, like import_wh / export_wh when reading instantaneous values
+
+  // values used to build the model string
+  "type_designation": {
+    "address": "",
+    "type": "string",
+    "fixed": "Renault Zoe"
+  },
+  "version": {
+    "address": "",
+    "type": "string",
+    "fixed": "0.1"
+  },
+  "firmware_version": {
+    "address": "",
+    "type": "string",
+    "fixed": ""
+  },
+  "serial": {
+    "address": "",
+    "type": "string",
+    "fixed": "0"
+  },
+
+  "soc": {
+    "address": "/zoe/json",
+    "query": "soc",
+    "type": "int16"
+  }
+}
+ 
