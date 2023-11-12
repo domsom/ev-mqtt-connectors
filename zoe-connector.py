@@ -22,6 +22,7 @@ soc = None
 remaining_range = None
 charging_status = None
 plug_status = None
+data_timestamp = None
 
 def getSocRange(gigya):
 
@@ -33,14 +34,13 @@ def getSocRange(gigya):
     remaining_range = b['batteryAutonomy']
     charging_status = b['chargingStatus']
     plug_status = b['plugStatus']
+    data_timestamp = time.time()
 
     logging.info("Zoe API: soc: {}%, range: {}km, charging status: {}, plug status: {}".format(soc, remaining_range, charging_status, plug_status))
 
-    return soc, remaining_range, charging_status, plug_status
 
-
-def update_mqtt():
-    zoe = {'soc': soc, 'range': remaining_range}
+def update_mqtt(ts):
+    zoe = {'soc': soc, 'range': remaining_range, 'data_timestamp': data_timestamp, 'timestamp': ts}
     mqttc.publish(topic=ZOE_MQTT_PREFIX, payload=json.dumps(zoe), qos=0, retain=True)
 
 
@@ -72,13 +72,13 @@ if __name__ == '__main__':
     while True:
         try:
             if (time.time() >= next_update_ts):
-                soc, remaining_range, charging_status, plug_status = getSocRange(g)
+                getSocRange(g)
                 if (charging_status in _ACTIVE_STATES):
                     next_update_ts = time.time() + FREQUENCY_ACTIVE
                 else:
                     next_update_ts = time.time() + FREQUENCY_INACTIVE
             if (soc != None):
-                update_mqtt()
+                update_mqtt(next_update_ts)
             time.sleep(MQTT_FREQUENCY)
         except KeyboardInterrupt:
             logging.warning("Keyboard interruption")
