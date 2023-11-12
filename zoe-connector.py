@@ -40,8 +40,8 @@ def getSocRange(gigya):
     return soc, remaining_range, charging_status, plug_status, data_timestamp
 
 
-def update_mqtt(ts):
-    zoe = {'soc': soc, 'range': remaining_range, 'data_timestamp': data_timestamp, 'timestamp': ts}
+def update_mqtt():
+    zoe = {'soc': soc, 'range': remaining_range, 'data_timestamp': data_timestamp, 'timestamp': time.time()}
     mqttc.publish(topic=ZOE_MQTT_PREFIX, payload=json.dumps(zoe), qos=0, retain=True)
 
 
@@ -79,7 +79,7 @@ if __name__ == '__main__':
                 else:
                     next_update_ts = time.time() + FREQUENCY_INACTIVE
             if (soc != None):
-                update_mqtt(next_update_ts)
+                update_mqtt()
             time.sleep(MQTT_FREQUENCY)
         except KeyboardInterrupt:
             logging.warning("Keyboard interruption")
