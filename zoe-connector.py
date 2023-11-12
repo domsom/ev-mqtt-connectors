@@ -25,7 +25,6 @@ plug_status = None
 data_timestamp = None
 
 def getSocRange(gigya):
-
     k = Kamereon(api_key=KAMEREON_API_KEY, gigya=gigya, country='DE')
     v = Vehicle(ZOE_VIN, k)
 
@@ -34,9 +33,11 @@ def getSocRange(gigya):
     remaining_range = b['batteryAutonomy']
     charging_status = b['chargingStatus']
     plug_status = b['plugStatus']
-    data_timestamp = time.time()
+    data_timestamp = int(time.time())
 
     logging.info("Zoe API: soc: {}%, range: {}km, charging status: {}, plug status: {}".format(soc, remaining_range, charging_status, plug_status))
+
+    return soc, remaining_range, charging_status, plug_status, data_timestamp
 
 
 def update_mqtt(ts):
@@ -72,7 +73,7 @@ if __name__ == '__main__':
     while True:
         try:
             if (time.time() >= next_update_ts):
-                getSocRange(g)
+                soc, remaining_range, charging_status, plug_status, data_timestamp = getSocRange(g)
                 if (charging_status in _ACTIVE_STATES):
                     next_update_ts = time.time() + FREQUENCY_ACTIVE
                 else:
