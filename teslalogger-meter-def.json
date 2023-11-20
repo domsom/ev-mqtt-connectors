@@ -1,0 +1,70 @@
+{
+  "rtype":  2,   // 0 = modbus, 1 = http/json, 2 = mqtt/json
+
+  "name": "Tesla", // as displayed in the config dialog
+  "manufacturer": "TeslaLogger",
+  "dev_type": "tesla", // will be prefixed by "meter_"
+
+  "delay_accumulated": true,   // false: always read accumulated value, like import_wh / export_wh when reading instantaneous values
+
+  // values used to build the model string
+  "type_designation": {
+    "address": "",
+    "type": "string",
+    "fixed": "TeslaLogger"
+  },
+  "version": {
+    "address": "",
+    "type": "string",
+    "fixed": "0.1"
+  },
+  "firmware_version": {
+    "address": "",
+    "type": "string",
+    "fixed": ""
+  },
+  "serial": {
+    "address": "",
+    "type": "string",
+    "fixed": "0"
+  },
+
+  "soc": {
+    "address": "/tesla/json",
+    "query": "battery_level",
+    "type": "int16"
+  },
+  "*Reichweite": {
+    "address": "/tesla/json",
+    "query": "battery_range_km",
+    "type": "float"
+  },
+  "*Aussentemperatur": {
+    "address": "/tesla/json",
+    "query": "outside_temp",
+    "type": "float"
+  },
+  "current": {
+    "address": "/tesla/json",
+    "query": "charger_actual_current",
+    "type": "int16"
+  },
+  "cphases": {
+    "address": "/tesla/json",
+    "query": "charger_phases",
+    "type": "int16"
+  },
+  "power_w": {
+    "address": "/tesla/json",
+    "query": "charger_power",
+    "type": "int16"
+  },
+  "txn_energy": {
+    "address": "/tesla/json",
+    "query": "charge_energy_added",
+    "type": "float"
+  }
+
+
+}
+ 
