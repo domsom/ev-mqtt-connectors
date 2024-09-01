@@ -26,13 +26,19 @@
   "serial": {
     "address": "",
     "type": "string",
-    "fixed": "0"
+    "fixed": "2"
   },
 
   "soc": {
     "address": "/zoe/json",
     "query": "soc",
     "type": "int16"
+  },
+  "*Reichweite": {
+    "address": "/zoe/json",
+    "query": "range",
+    "type": "int16"
   }
+
 }
  

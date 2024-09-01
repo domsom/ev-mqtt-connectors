@@ -1,8 +1,8 @@
 {
   "rtype":  2,   // 0 = modbus, 1 = http/json, 2 = mqtt/json
 
-  "name": "Tesla", // as displayed in the config dialog
-  "manufacturer": "TeslaLogger",
+  "name": "Tesla Model Y", // as displayed in the config dialog
+  "manufacturer": "Tesla",
   "dev_type": "tesla", // will be prefixed by "meter_"
 
   "delay_accumulated": true,   // false: always read accumulated value, like import_wh / export_wh when reading instantaneous values
@@ -11,7 +11,7 @@
   "type_designation": {
     "address": "",
     "type": "string",
-    "fixed": "TeslaLogger"
+    "fixed": "Tesla Model Y"
   },
   "version": {
     "address": "",
